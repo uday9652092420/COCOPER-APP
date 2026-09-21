@@ -1,0 +1,6 @@
+{
+  "APP_NAME": "COCOPER",
+  "IS_PRODUCTION": true,
+  "API_BASE_URL": "https://api.cocoper.in",
+  "USE_MOCK_BACKEND": false
+}
