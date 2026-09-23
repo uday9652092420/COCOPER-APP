@@ -18,7 +18,7 @@ class TransactionDetailView extends GetView<TransactionDetailController> {
 
   @override
   Widget build(BuildContext context) => CocoperShell(
-        activeIndex: 0,
+        activeIndex: 1,
         body: Obx(() {
           if (controller.isLoading.value && controller.record.value == null) {
             return const LoadingCards(count: 4);

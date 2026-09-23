@@ -11,60 +11,15 @@ class CocoperLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mark = Container(
+    final mark = SizedBox(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [CocoperColors.teal, Color(0xFF0D7565)],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size * .22),
+        child: Image.asset(
+          'assets/images/logo.png',
+          fit: BoxFit.cover,
         ),
-        borderRadius: BorderRadius.circular(size * .3),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x26083F3A),
-            blurRadius: 14,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: size * .7,
-            height: size * .7,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withValues(alpha: .28)),
-            ),
-          ),
-          Text(
-            'C',
-            style: TextStyle(
-              color: CocoperColors.lime,
-              fontSize: size * .58,
-              fontWeight: FontWeight.w900,
-              height: 1,
-            ),
-          ),
-          Positioned(
-            right: size * .16,
-            bottom: size * .18,
-            child: Container(
-              width: size * .15,
-              height: size * .22,
-              decoration: const BoxDecoration(
-                color: CocoperColors.coral,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
     if (!showWordmark) return mark;

@@ -16,7 +16,7 @@ class ReportDetailView extends GetView<ReportDetailController> {
 
   @override
   Widget build(BuildContext context) => CocoperShell(
-        activeIndex: 1,
+        activeIndex: 2,
         body: SingleChildScrollView(
           child: ResponsiveBody(
             maxWidth: 1050,

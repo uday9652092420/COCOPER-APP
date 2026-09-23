@@ -15,7 +15,7 @@ class TransactionCatalogView extends GetView<TransactionCatalogController> {
 
   @override
   Widget build(BuildContext context) => CocoperShell(
-        activeIndex: 0,
+        activeIndex: 1,
         body: Obx(
           () => SingleChildScrollView(
             child: ResponsiveBody(

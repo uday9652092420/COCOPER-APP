@@ -14,7 +14,7 @@ class ReportCatalogView extends GetView<ReportCatalogController> {
 
   @override
   Widget build(BuildContext context) => CocoperShell(
-        activeIndex: 1,
+        activeIndex: 2,
         body: SingleChildScrollView(
           child: ResponsiveBody(
             child: Column(

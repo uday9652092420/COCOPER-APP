@@ -18,7 +18,7 @@ class TransactionListView extends GetView<TransactionListController> {
 
   @override
   Widget build(BuildContext context) => CocoperShell(
-        activeIndex: 0,
+        activeIndex: 1,
         body: Stack(
           children: [
             RefreshIndicator(

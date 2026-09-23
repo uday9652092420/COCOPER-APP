@@ -17,7 +17,7 @@ class TransactionFormView extends GetView<TransactionFormController> {
 
   @override
   Widget build(BuildContext context) => CocoperShell(
-        activeIndex: 0,
+        activeIndex: 1,
         body: Obx(() {
           final definition = controller.definition;
           final activeStep = controller.activeStep;

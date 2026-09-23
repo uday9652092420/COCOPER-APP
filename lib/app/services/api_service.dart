@@ -32,6 +32,15 @@ abstract final class ApiService {
             if (token != null && token.isNotEmpty) {
               options.headers['Authorization'] = 'Bearer $token';
             }
+            final organizationId =
+                await SecureStorageHelper.getOrganizationId();
+            final branchId = await SecureStorageHelper.getSelectedBranchId();
+            if (organizationId != null && organizationId.isNotEmpty) {
+              options.headers['x-organization-id'] = organizationId;
+            }
+            if (branchId != null && branchId.isNotEmpty) {
+              options.headers['x-branch-id'] = branchId;
+            }
           }
           handler.next(options);
         },
@@ -94,6 +103,16 @@ abstract final class ApiService {
             extra: {'requireAuthToken': requireAuthToken},
           ),
         ),
+      );
+
+  static Future<Response<T>> put<T>(
+    String endpoint, {
+    Object? data,
+    Map<String, String>? headers,
+  }) =>
+      _execute<T>(
+        () => _dio.put<T>(endpoint,
+            data: data, options: Options(headers: headers)),
       );
 
   static Future<Response<T>> request<T>(

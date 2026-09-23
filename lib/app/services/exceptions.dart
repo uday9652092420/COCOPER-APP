@@ -20,7 +20,8 @@ final class NetworkException extends AppException {
 }
 
 final class SessionExpiredException extends AppException {
-  const SessionExpiredException() : super('session_expired', statusCode: 401);
+  const SessionExpiredException([super.message = 'session_expired'])
+      : super(statusCode: 401);
 }
 
 final class ValidationException extends AppException {
@@ -37,13 +38,13 @@ final class ServerException extends AppException {
 
 AppException mapDioException(DioException error) {
   final status = error.response?.statusCode;
-  if (status == 401 || status == 403) return const SessionExpiredException();
-
   final body = error.response?.data;
   final map = body is Map<dynamic, dynamic>
       ? body.map((key, value) => MapEntry('$key', value))
       : const <String, dynamic>{};
   final message = map['message']?.toString() ?? 'something_went_wrong';
+  if (status == 401) return SessionExpiredException(message);
+
   final rawFieldErrors = map['fieldErrors'];
   final fieldErrors = rawFieldErrors is Map<dynamic, dynamic>
       ? rawFieldErrors.map((key, value) => MapEntry('$key', '$value'))

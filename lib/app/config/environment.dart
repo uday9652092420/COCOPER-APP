@@ -9,7 +9,7 @@ abstract final class Environment {
   );
   static const apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://api.cocoper.in',
+    defaultValue: 'http://10.0.2.2:4004/api',
   );
   static const useMockBackend = bool.fromEnvironment(
     'USE_MOCK_BACKEND',

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 import '../../config/constants.dart';
 import '../../controllers/shell/shell_controller.dart';
-import '../../models/session/user_session_model.dart';
 import '../../routes/app_routes.dart';
 import '../../services/sync_service.dart';
 import '../../theme/app_theme.dart';
@@ -25,14 +24,24 @@ class CocoperShell extends GetView<ShellController> {
     final tablet = width >= AppConstants.mobileBreakpoint;
     final destinations = [
       NavigationDestination(
+        icon: const Icon(Icons.home_outlined),
+        selectedIcon: const Icon(Icons.home_rounded),
+        label: 'Home',
+      ),
+      NavigationDestination(
         icon: const Icon(Icons.grid_view_outlined),
         selectedIcon: const Icon(Icons.grid_view_rounded),
-        label: 'transactions'.tr,
+        label: 'Operations',
       ),
       NavigationDestination(
         icon: const Icon(Icons.pie_chart_outline_rounded),
         selectedIcon: const Icon(Icons.pie_chart_rounded),
-        label: 'reports'.tr,
+        label: 'Statements',
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.more_horiz_rounded),
+        selectedIcon: const Icon(Icons.more_horiz_rounded),
+        label: 'More',
       ),
     ];
 
@@ -90,7 +99,13 @@ class CocoperShell extends GetView<ShellController> {
 
   void _navigate(int index) {
     if (index == activeIndex) return;
-    Get.offAllNamed<void>(index == 0 ? Routes.transactions : Routes.reports);
+    final route = switch (index) {
+      0 => Routes.home,
+      1 => Routes.transactions,
+      2 => Routes.statements,
+      _ => Routes.more,
+    };
+    Get.offAllNamed<void>(route);
   }
 }
 
@@ -114,20 +129,25 @@ class _AppHeader extends GetView<ShellController> {
               children: [
                 Row(
                   children: [
-                    CocoperLogo(size: tablet ? 46 : 42),
+                    if (tablet)
+                      const CocoperLogo(size: 46)
+                    else
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: const CocoperLogo(size: 38),
+                        ),
+                      ),
                     const Spacer(),
                     if (tablet) ...[
                       _SyncChip(count: SyncService.pendingCount.value),
                       const SizedBox(width: 8),
-                      _ContextChip(
-                        icon: Icons.warehouse_rounded,
-                        label: session.branchName,
-                      ),
+                      _BranchSelector(controller: controller, compact: true),
                       const SizedBox(width: 8),
                       _ContextChip(
-                        icon: Icons.badge_rounded,
-                        label: session.role.translationKey.tr,
-                        warm: true,
+                        icon: Icons.business_rounded,
+                        label: session.organizationName,
                       ),
                       const SizedBox(width: 8),
                     ],
@@ -142,8 +162,8 @@ class _AppHeader extends GetView<ShellController> {
                         PopupMenuItem(value: 'kn', child: Text('ಕನ್ನಡ')),
                       ],
                       child: Container(
-                        height: 42,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        height: 38,
+                        padding: const EdgeInsets.symmetric(horizontal: 9),
                         decoration: BoxDecoration(
                           border: Border.all(color: CocoperColors.line),
                           borderRadius: BorderRadius.circular(14),
@@ -161,6 +181,15 @@ class _AppHeader extends GetView<ShellController> {
                         ),
                       ),
                     ),
+                    const SizedBox(width: 6),
+                    IconButton(
+                      tooltip: 'Profile',
+                      onPressed: () => Get.toNamed<void>(Routes.profile),
+                      icon: const Icon(Icons.person_outline_rounded),
+                      padding: EdgeInsets.zero,
+                      constraints:
+                          const BoxConstraints.tightFor(width: 36, height: 36),
+                    ),
                   ],
                 ),
                 if (!tablet) ...[
@@ -168,19 +197,13 @@ class _AppHeader extends GetView<ShellController> {
                   Row(
                     children: [
                       Expanded(
-                        child: _ContextChip(
-                          icon: Icons.warehouse_rounded,
-                          label:
-                              '${'active_branch'.tr} · ${session.branchName}',
-                          fill: true,
-                        ),
+                        child: _BranchSelector(controller: controller),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: _ContextChip(
-                          icon: Icons.badge_rounded,
-                          label: session.role.translationKey.tr,
-                          warm: true,
+                          icon: Icons.business_rounded,
+                          label: session.organizationName,
                           fill: true,
                         ),
                       ),
@@ -194,17 +217,55 @@ class _AppHeader extends GetView<ShellController> {
       );
 }
 
+class _BranchSelector extends StatelessWidget {
+  const _BranchSelector({required this.controller, this.compact = false});
+
+  final ShellController controller;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) => Obx(
+        () => PopupMenuButton<String>(
+          tooltip: 'Select active branch',
+          onSelected: controller.selectBranch,
+          itemBuilder: (_) {
+            if (controller.branches.isEmpty) {
+              return const [
+                PopupMenuItem<String>(
+                  enabled: false,
+                  child: Text('No assigned branches'),
+                ),
+              ];
+            }
+            return controller.branches
+                .map((branch) => PopupMenuItem<String>(
+                      value: branch.id,
+                      child: Text(branch.name),
+                    ))
+                .toList(growable: false);
+          },
+          child: _ContextChip(
+            icon: Icons.warehouse_rounded,
+            label: compact
+                ? controller.session.value.branchName.isEmpty
+                    ? 'No branch selected'
+                    : controller.session.value.branchName
+                : '${'active_branch'.tr} · ${controller.session.value.branchName.isEmpty ? 'None' : controller.session.value.branchName}',
+            fill: !compact,
+          ),
+        ),
+      );
+}
+
 class _ContextChip extends StatelessWidget {
   const _ContextChip({
     required this.icon,
     required this.label,
-    this.warm = false,
     this.fill = false,
   });
 
   final IconData icon;
   final String label;
-  final bool warm;
   final bool fill;
 
   @override
@@ -212,19 +273,19 @@ class _ContextChip extends StatelessWidget {
         height: 46,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: warm ? const Color(0xFFFFF5EC) : const Color(0xFFEEF7EA),
+          color: const Color(0xFFEEF7EA),
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
-            color: warm ? const Color(0xFFEAD9CC) : const Color(0xFFD9E5DA),
+            color: const Color(0xFFD9E5DA),
           ),
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: fill ? MainAxisSize.max : MainAxisSize.min,
           children: [
             Icon(
               icon,
               size: 18,
-              color: warm ? CocoperColors.coral : CocoperColors.teal,
+              color: CocoperColors.teal,
             ),
             const SizedBox(width: 8),
             if (fill)

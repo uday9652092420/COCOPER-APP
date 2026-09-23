@@ -56,6 +56,12 @@ class CocoperApp extends StatelessWidget {
         initialBinding: AppPages.initialBinding,
         initialRoute: AppPages.initialPage,
         getPages: AppPages.routes,
+        unknownRoute: GetPage<void>(
+          name: '/not-found',
+          page: () => const Scaffold(
+            body: Center(child: Text('Page not found')),
+          ),
+        ),
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context).copyWith(
             textScaler: MediaQuery.textScalerOf(context)
