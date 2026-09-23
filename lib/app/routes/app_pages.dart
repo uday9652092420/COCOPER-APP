@@ -12,6 +12,8 @@ import '../views/reports/report_catalog_view.dart';
 import '../views/reports/report_detail_view.dart';
 import '../views/auth/login_view.dart';
 import '../views/home/home_view.dart';
+import '../controllers/attendance/labour_attendance_controller.dart';
+import '../views/attendance/labour_attendance_view.dart';
 import '../views/more/more_view.dart';
 import '../views/profile/profile_view.dart';
 import '../views/transactions/transaction_catalog_view.dart';
@@ -37,6 +39,16 @@ abstract final class AppPages {
       name: Routes.home,
       page: HomeView.new,
       middlewares: [AuthMiddleware()],
+    ),
+    GetPage<void>(
+      name: Routes.labourAttendance,
+      page: LabourAttendanceView.new,
+      middlewares: [AuthMiddleware()],
+      binding: BindingsBuilder<void>(
+        () => Get.lazyPut<LabourAttendanceController>(
+          LabourAttendanceController.new,
+        ),
+      ),
     ),
     GetPage<void>(
       name: Routes.transactions,

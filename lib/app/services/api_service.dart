@@ -115,6 +115,19 @@ abstract final class ApiService {
             data: data, options: Options(headers: headers)),
       );
 
+  static Future<Response<T>> patch<T>(
+    String endpoint, {
+    Object? data,
+    Map<String, String>? headers,
+  }) =>
+      _execute<T>(
+        () => _dio.patch<T>(
+          endpoint,
+          data: data,
+          options: Options(headers: headers),
+        ),
+      );
+
   static Future<Response<T>> request<T>(
     String endpoint, {
     required String method,

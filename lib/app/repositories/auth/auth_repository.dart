@@ -26,9 +26,25 @@ class AuthRepository {
       EndPoints.userPermissions(userId),
     );
     final data = response.data;
-    return data is List
-        ? data.map((item) => item.toString()).toList()
-        : const [];
+    final raw = data is Map
+        ? data['permissions'] ?? data['data'] ?? data['items']
+        : data;
+    if (raw is! List) return const [];
+    return raw
+        .map((item) {
+          if (item is Map) {
+            return item['name'] ??
+                item['permission'] ??
+                item['permission_name'] ??
+                item['permissionName'] ??
+                item['feature'] ??
+                item['code'];
+          }
+          return item;
+        })
+        .whereType<Object>()
+        .map((item) => item.toString())
+        .toList(growable: false);
   }
 
   Future<AuthUser?> restoreUser() async {

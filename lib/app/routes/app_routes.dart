@@ -9,6 +9,7 @@ abstract final class Routes {
   static const statements = '/statements';
   static const more = '/more';
   static const profile = '/profile';
+  static const labourAttendance = '/labour-attendance';
   static const reportDetail = '/reports/:type';
 
   static String transactionListFor(String type) => '/transactions/$type';

@@ -32,6 +32,25 @@ class ShellController extends GetxController {
     loadBootstrap();
   }
 
+  bool get hasLabourAttendanceAccess => permissions.any((permission) {
+        final normalized =
+            permission.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+        return normalized.contains('mobileapplabourattendance') ||
+            normalized.contains('mobilelabourattendance') ||
+            normalized.contains('labourattendance');
+      });
+
+  bool get hasMobileHomeAccess => permissions.any((permission) {
+        final normalized =
+            permission.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+        return normalized.contains('mobileapplogin') ||
+            normalized.contains('mobilelogin');
+      });
+
+  String get landingRoute => hasLabourAttendanceAccess && !hasMobileHomeAccess
+      ? Routes.labourAttendance
+      : Routes.home;
+
   Future<bool> restoreSession() async {
     final user = await Get.find<AuthRepository>().restoreUser();
     if (user == null) return false;

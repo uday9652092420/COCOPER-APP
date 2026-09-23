@@ -8,8 +8,14 @@ class AuthMiddleware extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
     final shell = Get.find<ShellController>();
-    return shell.isAuthenticated.value
-        ? null
-        : const RouteSettings(name: Routes.login);
+    if (!shell.isAuthenticated.value) {
+      return const RouteSettings(name: Routes.login);
+    }
+    if (shell.hasLabourAttendanceAccess &&
+        !shell.hasMobileHomeAccess &&
+        route != Routes.labourAttendance) {
+      return const RouteSettings(name: Routes.labourAttendance);
+    }
+    return null;
   }
 }

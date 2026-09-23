@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 import '../../repositories/auth/auth_repository.dart';
 import '../../models/session/user_session_model.dart';
-import '../../routes/app_routes.dart';
 import '../../services/exceptions.dart';
 import '../shell/shell_controller.dart';
 
@@ -72,7 +71,7 @@ class LoginController extends GetxController {
         user: result.user,
       );
       status.value = LoginStatus.success;
-      await Get.offAllNamed<void>(Routes.home);
+      await Get.offAllNamed<void>(Get.find<ShellController>().landingRoute);
     } on AppException catch (exception) {
       status.value = switch (exception.statusCode) {
         401 => LoginStatus.invalidCredentials,
@@ -91,7 +90,7 @@ class LoginController extends GetxController {
 
   Future<void> restoreSession() async {
     if (await Get.find<ShellController>().restoreSession()) {
-      await Get.offAllNamed<void>(Routes.home);
+      await Get.offAllNamed<void>(Get.find<ShellController>().landingRoute);
     }
   }
 

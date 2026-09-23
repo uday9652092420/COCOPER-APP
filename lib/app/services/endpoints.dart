@@ -2,6 +2,10 @@ abstract final class EndPoints {
   static const login = '/auth/login';
   static const mobileBootstrap = '/mobile/bootstrap';
   static const mobileBranchSelection = '/mobile/selection/branch';
+  static const mobileLabourAttendance = '/mobile/labour-attendance';
+
+  static String mobileLabourAttendanceCheckout(String id) =>
+      '/mobile/labour-attendance/$id/checkout';
   static const logout = '/auth/logout';
   static const transactionLookups = '/v1/lookups/transactions';
   static const refreshToken = '/v1/auth/refresh-token';
